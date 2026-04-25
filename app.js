@@ -360,13 +360,14 @@ document.addEventListener('keydown', (e) => {
 // Resize canvas on window resize
 window.addEventListener('resize', resizeCanvas);
 
-// ── 11b. SETTINGS PANEL ──────────────────────────────────────────────────────
+// ── 11b. SETTINGS FAB (top-right) ────────────────────────────────────────────────
 
 const kaidahSlider    = document.getElementById('kaidahSlider');
 const kaidahBadge     = document.getElementById('kaidahValueBadge');
 const settingsHint    = document.getElementById('settingsHint');
 const settingsToggle  = document.getElementById('settingsToggle');
-const settingsBody    = document.getElementById('settingsBody');
+const settingsDropdown = document.getElementById('settingsDropdown');
+const settingsFab      = document.getElementById('settingsFab');
 
 /** Update tampilan badge + hint setelah slider bergerak */
 function onSliderChange() {
@@ -379,25 +380,41 @@ function onSliderChange() {
 
 kaidahSlider.addEventListener('input', onSliderChange);
 
-/** Toggle buka/tutup panel pengaturan */
-function toggleSettings() {
-  const isOpen = settingsBody.classList.contains('open');
+/** Toggle buka/tutup dropdown settings */
+function toggleSettings(e) {
+  e.stopPropagation();
+  const isOpen = settingsDropdown.classList.contains('open');
   if (isOpen) {
-    settingsBody.classList.remove('open');
-    settingsToggle.setAttribute('aria-expanded', 'false');
-    settingsToggle.classList.remove('active');
+    closeSettings();
   } else {
-    settingsBody.classList.add('open');
+    settingsDropdown.classList.add('open');
+    settingsDropdown.setAttribute('aria-hidden', 'false');
     settingsToggle.setAttribute('aria-expanded', 'true');
     settingsToggle.classList.add('active');
   }
 }
 
+function closeSettings() {
+  settingsDropdown.classList.remove('open');
+  settingsDropdown.setAttribute('aria-hidden', 'true');
+  settingsToggle.setAttribute('aria-expanded', 'false');
+  settingsToggle.classList.remove('active');
+}
+
 settingsToggle.addEventListener('click', toggleSettings);
-settingsToggle.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    toggleSettings();
+
+// Tutup saat klik di luar FAB
+document.addEventListener('click', (e) => {
+  if (!settingsFab.contains(e.target)) {
+    closeSettings();
+  }
+});
+
+// Tutup saat tekan Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && settingsDropdown.classList.contains('open')) {
+    closeSettings();
+    settingsToggle.focus();
   }
 });
 
