@@ -8,24 +8,23 @@
 const NOMOR_ABSEN = Array.from({ length: 30 }, (_, i) => i + 1);
 
 /**
- * Daftar kuis kaidah.
- * 6 kaidah × 2 tipe = 12 item.
- * Tampilan instruksi: "Kaidah ke-N" atau "Kaidah ke-N + Makna"
+ * Jumlah kaidah yang dijadikan soal (dapat diubah lewat slider).
+ * Default = 6, rentang 1–10.
  */
-const DAFTAR_KUIS = [
-  { kaidah_ke: 1, tipe: 'kaidah' },
-  { kaidah_ke: 1, tipe: 'makna'  },
-  { kaidah_ke: 2, tipe: 'kaidah' },
-  { kaidah_ke: 2, tipe: 'makna'  },
-  { kaidah_ke: 3, tipe: 'kaidah' },
-  { kaidah_ke: 3, tipe: 'makna'  },
-  { kaidah_ke: 4, tipe: 'kaidah' },
-  { kaidah_ke: 4, tipe: 'makna'  },
-  { kaidah_ke: 5, tipe: 'kaidah' },
-  { kaidah_ke: 5, tipe: 'makna'  },
-  { kaidah_ke: 6, tipe: 'kaidah' },
-  { kaidah_ke: 6, tipe: 'makna'  },
-];
+let maxKaidah = 6;
+
+/**
+ * Bangun daftar kuis berdasarkan maxKaidah.
+ * Setiap kaidah menghasilkan 2 soal: tipe 'kaidah' dan 'makna'.
+ */
+function buildDaftarKuis(max) {
+  const list = [];
+  for (let k = 1; k <= max; k++) {
+    list.push({ kaidah_ke: k, tipe: 'kaidah' });
+    list.push({ kaidah_ke: k, tipe: 'makna'  });
+  }
+  return list;
+}
 
 
 // ── 2. STATE ──────────────────────────────────────────────────────────────────
@@ -193,7 +192,7 @@ async function startRoll() {
 // ── 7. QUIZ MODAL ─────────────────────────────────────────────────────────────
 
 function pickQuiz() {
-  return pickRandom(DAFTAR_KUIS);
+  return pickRandom(buildDaftarKuis(maxKaidah));
 }
 
 function renderQuiz(quiz) {
@@ -360,6 +359,47 @@ document.addEventListener('keydown', (e) => {
 
 // Resize canvas on window resize
 window.addEventListener('resize', resizeCanvas);
+
+// ── 11b. SETTINGS PANEL ──────────────────────────────────────────────────────
+
+const kaidahSlider    = document.getElementById('kaidahSlider');
+const kaidahBadge     = document.getElementById('kaidahValueBadge');
+const settingsHint    = document.getElementById('settingsHint');
+const settingsToggle  = document.getElementById('settingsToggle');
+const settingsBody    = document.getElementById('settingsBody');
+
+/** Update tampilan badge + hint setelah slider bergerak */
+function onSliderChange() {
+  maxKaidah = Number(kaidahSlider.value);
+  kaidahBadge.textContent = maxKaidah;
+  const jumlahSoal = maxKaidah * 2;
+  settingsHint.textContent =
+    `Soal dipilih acak dari kaidah 1–${maxKaidah} (${jumlahSoal} kemungkinan soal)`;
+}
+
+kaidahSlider.addEventListener('input', onSliderChange);
+
+/** Toggle buka/tutup panel pengaturan */
+function toggleSettings() {
+  const isOpen = settingsBody.classList.contains('open');
+  if (isOpen) {
+    settingsBody.classList.remove('open');
+    settingsToggle.setAttribute('aria-expanded', 'false');
+    settingsToggle.classList.remove('active');
+  } else {
+    settingsBody.classList.add('open');
+    settingsToggle.setAttribute('aria-expanded', 'true');
+    settingsToggle.classList.add('active');
+  }
+}
+
+settingsToggle.addEventListener('click', toggleSettings);
+settingsToggle.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    toggleSettings();
+  }
+});
 
 
 // ── 12. INIT ──────────────────────────────────────────────────────────────────
