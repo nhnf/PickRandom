@@ -4,22 +4,23 @@
 
 // ── 1. DATA STATIS ────────────────────────────────────────────────────────────
 
-/** Daftar nomor absen 1–30 */
-const NOMOR_ABSEN = Array.from({ length: 30 }, (_, i) => i + 1);
+/** Daftar nomor absen */
+let NOMOR_ABSEN = Array.from({ length: 30 }, (_, i) => i + 1);
 
 /**
- * Jumlah kaidah yang dijadikan soal (dapat diubah lewat slider).
- * Default = 6, rentang 1–10.
+ * Rentang kaidah yang dijadikan soal.
+ * Default 1 sampai 6.
  */
+let minKaidah = 1;
 let maxKaidah = 6;
 
 /**
- * Bangun daftar kuis berdasarkan maxKaidah.
+ * Bangun daftar kuis berdasarkan minKaidah dan maxKaidah.
  * Setiap kaidah menghasilkan 2 soal: tipe 'kaidah' dan 'makna'.
  */
-function buildDaftarKuis(max) {
+function buildDaftarKuis(min, max) {
   const list = [];
-  for (let k = 1; k <= max; k++) {
+  for (let k = min; k <= max; k++) {
     list.push({ kaidah_ke: k, tipe: 'kaidah' });
     list.push({ kaidah_ke: k, tipe: 'makna'  });
   }
@@ -192,7 +193,7 @@ async function startRoll() {
 // ── 7. QUIZ MODAL ─────────────────────────────────────────────────────────────
 
 function pickQuiz() {
-  return pickRandom(buildDaftarKuis(maxKaidah));
+  return pickRandom(buildDaftarKuis(minKaidah, maxKaidah));
 }
 
 function renderQuiz(quiz) {
@@ -362,23 +363,49 @@ window.addEventListener('resize', resizeCanvas);
 
 // ── 11b. SETTINGS FAB (top-right) ────────────────────────────────────────────────
 
-const kaidahSlider    = document.getElementById('kaidahSlider');
-const kaidahBadge     = document.getElementById('kaidahValueBadge');
+const jumlahSantriInput = document.getElementById('jumlahSantriInput');
+const kaidahMinInput  = document.getElementById('kaidahMinInput');
+const kaidahMaxInput  = document.getElementById('kaidahMaxInput');
 const settingsHint    = document.getElementById('settingsHint');
 const settingsToggle  = document.getElementById('settingsToggle');
 const settingsDropdown = document.getElementById('settingsDropdown');
 const settingsFab      = document.getElementById('settingsFab');
 
-/** Update tampilan badge + hint setelah slider bergerak */
-function onSliderChange() {
-  maxKaidah = Number(kaidahSlider.value);
-  kaidahBadge.textContent = maxKaidah;
-  const jumlahSoal = maxKaidah * 2;
-  settingsHint.textContent =
-    `Soal dipilih acak dari kaidah 1–${maxKaidah} (${jumlahSoal} kemungkinan soal)`;
+/** Reset progres saat jumlah santri diubah */
+function resetProgress() {
+  let total = Number(jumlahSantriInput.value) || 30;
+  if (total < 1) { total = 1; jumlahSantriInput.value = 1; }
+  
+  NOMOR_ABSEN = Array.from({ length: total }, (_, i) => i + 1);
+  availableNumbers = [...NOMOR_ABSEN];
+  selectedNumbers = [];
+  
+  updateProgress();
+  historyContainer.innerHTML = '';
+  displayValue.textContent = '?';
+  numberDisplay.classList.remove('revealed');
+  numberRing.classList.remove('done', 'rolling');
 }
 
-kaidahSlider.addEventListener('input', onSliderChange);
+jumlahSantriInput.addEventListener('change', resetProgress);
+
+/** Update hint setelah range kaidah diubah */
+function onKaidahChange() {
+  let min = Number(kaidahMinInput.value) || 1;
+  let max = Number(kaidahMaxInput.value) || 6;
+  
+  if (min < 1) { min = 1; kaidahMinInput.value = 1; }
+  if (max < min) { max = min; kaidahMaxInput.value = max; }
+  
+  minKaidah = min;
+  maxKaidah = max;
+  
+  const jumlahSoal = (max - min + 1) * 2;
+  settingsHint.textContent = `Soal dipilih acak dari kaidah ${min}–${max} (${jumlahSoal} soal)`;
+}
+
+kaidahMinInput.addEventListener('change', onKaidahChange);
+kaidahMaxInput.addEventListener('change', onKaidahChange);
 
 /** Toggle buka/tutup dropdown settings */
 function toggleSettings(e) {

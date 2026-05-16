@@ -348,65 +348,32 @@
   transform: scale(1);
 }
 
-.slider-row {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-}
-
-.slider-min, .slider-max {
+.settings-input {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 0.5rem;
+  color: #fff;
   font-family: 'Outfit', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.35);
-  min-width: 1ch;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.6rem;
+  outline: none;
+  transition: all 0.2s;
+  width: 100%;
+}
+.settings-input:focus {
+  border-color: #A78BFA;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3);
+  background: rgba(255, 255, 255, 0.12);
 }
 
-/* Custom range slider */
-.kaidah-slider {
+/* Hide spin buttons for number inputs */
+.settings-input::-webkit-outer-spin-button,
+.settings-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
-  appearance: none;
-  flex: 1;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.12);
-  outline: none;
-  cursor: pointer;
-  position: relative;
+  margin: 0;
 }
-.kaidah-slider::-webkit-slider-runnable-track {
-  height: 6px;
-  border-radius: 999px;
-  background: linear-gradient(
-    to right,
-    #7C3AED 0%,
-    #EC4899 calc(var(--fill, 50%)),
-    rgba(255,255,255,0.12) calc(var(--fill, 50%))
-  );
-}
-.kaidah-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #A78BFA, #EC4899);
-  border: 2px solid #fff;
-  box-shadow: 0 0 8px rgba(124, 58, 237, 0.7);
-  cursor: pointer;
-  transition: transform 0.15s;
-}
-.kaidah-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-}
-.kaidah-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #A78BFA, #EC4899);
-  border: 2px solid #fff;
-  box-shadow: 0 0 8px rgba(124, 58, 237, 0.7);
-  cursor: pointer;
+.settings-input[type=number] {
+  -moz-appearance: textfield;
 }
 
 .settings-hint {

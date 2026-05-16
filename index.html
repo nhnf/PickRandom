@@ -181,23 +181,26 @@
 
     <!-- Dropdown panel -->
     <div id="settingsDropdown" class="settings-dropdown" aria-hidden="true">
-      <p class="dropdown-title">Pengaturan Kaidah</p>
-      <label class="settings-label" for="kaidahSlider">
-        Soal dari Kaidah ke-1 s/d
-        <span id="kaidahValueBadge" class="kaidah-badge">6</span>
-      </label>
-      <div class="slider-row">
-        <span class="slider-min">1</span>
-        <input
-          type="range"
-          id="kaidahSlider"
-          min="1" max="10" value="6" step="1"
-          class="kaidah-slider"
-          aria-label="Jumlah kaidah yang dijadikan soal"
-        />
-        <span class="slider-max">10</span>
+      <p class="dropdown-title">Pengaturan</p>
+      
+      <div class="flex flex-col gap-1 mt-2">
+        <label class="settings-label" for="jumlahSantriInput">Jumlah Santri</label>
+        <input type="number" id="jumlahSantriInput" class="settings-input" min="1" max="200" value="30" />
+        <p class="text-[0.65rem] text-white/30 leading-tight">*Mengubah ini akan mereset riwayat</p>
       </div>
-      <p class="settings-hint" id="settingsHint">Soal dipilih acak dari kaidah 1–6 (12 kemungkinan soal)</p>
+
+      <div class="divider-line my-2" aria-hidden="true"></div>
+
+      <div class="flex flex-col gap-1">
+        <label class="settings-label">Range Kaidah</label>
+        <div class="flex items-center justify-between gap-2">
+          <input type="number" id="kaidahMinInput" class="settings-input text-center" min="1" max="100" value="1" />
+          <span class="text-white/50 text-xs font-bold uppercase">s/d</span>
+          <input type="number" id="kaidahMaxInput" class="settings-input text-center" min="1" max="100" value="6" />
+        </div>
+      </div>
+      
+      <p class="settings-hint mt-2" id="settingsHint">Soal dipilih acak dari kaidah 1–6 (12 soal)</p>
     </div>
   </div>
 
