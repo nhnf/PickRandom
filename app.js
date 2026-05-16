@@ -13,6 +13,7 @@ let NOMOR_ABSEN = Array.from({ length: 30 }, (_, i) => i + 1);
  */
 let minKaidah = 1;
 let maxKaidah = 6;
+let includeMakna = true;
 
 /**
  * Bangun daftar kuis berdasarkan minKaidah dan maxKaidah.
@@ -22,7 +23,9 @@ function buildDaftarKuis(min, max) {
   const list = [];
   for (let k = min; k <= max; k++) {
     list.push({ kaidah_ke: k, tipe: 'kaidah' });
-    list.push({ kaidah_ke: k, tipe: 'makna'  });
+    if (includeMakna) {
+      list.push({ kaidah_ke: k, tipe: 'makna'  });
+    }
   }
   return list;
 }
@@ -366,6 +369,7 @@ window.addEventListener('resize', resizeCanvas);
 const jumlahSantriInput = document.getElementById('jumlahSantriInput');
 const kaidahMinInput  = document.getElementById('kaidahMinInput');
 const kaidahMaxInput  = document.getElementById('kaidahMaxInput');
+const includeMaknaCheck = document.getElementById('includeMaknaCheck');
 const settingsHint    = document.getElementById('settingsHint');
 const settingsToggle  = document.getElementById('settingsToggle');
 const settingsDropdown = document.getElementById('settingsDropdown');
@@ -400,12 +404,18 @@ function onKaidahChange() {
   minKaidah = min;
   maxKaidah = max;
   
-  const jumlahSoal = (max - min + 1) * 2;
+  const multiplier = includeMakna ? 2 : 1;
+  const jumlahSoal = (max - min + 1) * multiplier;
   settingsHint.textContent = `Soal dipilih acak dari kaidah ${min}–${max} (${jumlahSoal} soal)`;
 }
 
 kaidahMinInput.addEventListener('change', onKaidahChange);
 kaidahMaxInput.addEventListener('change', onKaidahChange);
+
+includeMaknaCheck.addEventListener('change', (e) => {
+  includeMakna = e.target.checked;
+  onKaidahChange();
+});
 
 /** Toggle buka/tutup dropdown settings */
 function toggleSettings(e) {
